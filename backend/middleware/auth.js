@@ -20,7 +20,7 @@ const authenticate = (req, res, next) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'demo_secret');
 
         req.user = {
             userId: decoded.userId || decoded.id,

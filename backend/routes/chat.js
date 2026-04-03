@@ -74,7 +74,14 @@ router.post('/scan', authenticate, async (req, res) => {
             console.log("🤖 Scanning with Ollama (Llava)...");
             const systemPrompt = "Analyze person's emotion and stress. Return ONLY a JSON object: {\"mood\": \"string\", \"stress\": 0-100, \"recommendation\": \"string\", \"insight\": \"string\"}. Do not talk, just JSON.";
             const userMsg = "Analyze this image.";
-            const aiRes = await callOllama('llava', systemPrompt, userMsg, [base64Data]);
+            
+            let aiRes;
+            try {
+                aiRes = await callOllama('llava', systemPrompt, userMsg, [base64Data]);
+            } catch (e) {
+                console.log("⚠️ Retrying with llava:latest...");
+                aiRes = await callOllama('llava:latest', systemPrompt, userMsg, [base64Data]);
+            }
             
             // ROBUST JSON EXTRACTION: Find the first { and the last }
             const jsonMatch = aiRes.match(/\{[\s\S]*\}/);
@@ -115,7 +122,22 @@ router.post('/ai', async (req, res) => {
         try {
             console.log("🤖 Thinking with Ollama (Consultant Mode - Phi-3 Smart)...");
             const systemPrompt = "You are Aura, a professional psychiatrist. Be clinical, empathetic, and direct. Respond only to the user's message and stay in character. Do not repeat the prompt.";
-            reply = await callOllama('phi3', systemPrompt, message);
+            
+            // 🌐 UNIVERSAL AI FALLBACK CHAIN (MindBridge Omni-Model Search)
+            let modelsToTry = ['phi3', 'phi3:latest', 'phi3:mini', 'phi3:small', 'llama3', 'llama3:latest', 'mistral', 'gemma', 'tinyllama'];
+            
+            for (let modelName of modelsToTry) {
+                try {
+                    console.log(`🤖 Neural Bridge: Attempting connection via ${modelName}...`);
+                    reply = await callOllama(modelName, systemPrompt, message);
+                    console.log(`✅ SUCCESS: Neural resonance established with [${modelName}]`);
+                    break; // STOP ONCE WE FIND A WORKING MODEL
+                } catch (e) {
+                    continue; // TRY NEXT
+                }
+            }
+
+            if (!reply) throw new Error("No neural model found. Please run 'ollama run phi3'");
             console.log("✅ OLLAMA CHAT SUCCESS");
         } catch (aiErr) {
             console.error("❌ Ollama Chat Error:", aiErr.message);

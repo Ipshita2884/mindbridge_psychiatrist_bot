@@ -194,7 +194,7 @@ const Exercises = () => {
                     </div>
                     <h3 className="font-semibold text-foreground mb-1">{game.title}</h3>
                     <p className="text-sm text-muted-foreground">{game.description}</p>
-                    <Button variant="ghost" size="sm" className="mt-4">
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/games')}>
                       Play Now
                     </Button>
                   </CardContent>
@@ -239,7 +239,10 @@ const Exercises = () => {
                   variant="interactive"
                   className="fade-in-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
-                  onClick={() => setActiveExercise(exercise.id)}
+                  onClick={() => {
+                    if (exercise.id === 'games') navigate('/games');
+                    else setActiveExercise(exercise.id);
+                  }}
                 >
                   <CardContent className="p-6">
                     <div className={`w-16 h-16 rounded-2xl ${exercise.color} flex items-center justify-center mb-4 shadow-glow`}>

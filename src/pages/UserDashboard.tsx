@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { 
   Brain, Activity, MessageCircle, Gamepad2, Music, 
-  Sparkles, Camera, Zap, ShieldCheck, HeartPulse, ArrowRight, Loader2, Target, AlertTriangle
+  Sparkles, Camera, Zap, ShieldCheck, HeartPulse, ArrowRight, Loader2, Target, AlertTriangle, User, Moon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -295,24 +295,60 @@ const UserDashboard = () => {
                 </div>
 
                 {/* Quick Actions Hub */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-center">
                      {[
                         { icon: MessageCircle, title: 'AI Companion', path: '/chat', desc: 'Secure Neural Chat', color: 'bg-teal-50' },
                         { icon: Gamepad2, title: 'Aura Arcade', path: '/games', desc: 'Clinical Relief Games', color: 'bg-emerald-50' },
                         { icon: HeartPulse, title: 'Bio-Sync', path: '/stress', desc: 'Clinical Biometrics', color: 'bg-rose-50' },
                         { icon: Music, title: 'Zen Audio', path: '/music', desc: 'Neural Wave Waves', color: 'bg-indigo-50' },
+                        { icon: User, title: 'Bio-Profile', path: '/profile', desc: 'Medical Data Hub', color: 'bg-slate-50' },
                     ].map((btn, i) => (
-                        <Card key={i} onClick={() => navigate(btn.path)} className="harmonic-glass border-white p-12 cursor-pointer hover:scale-[1.05] active:scale-95 transition-all text-center space-y-6 shadow-soft group">
-                            <div className={cn("w-20 h-20 rounded-[2.5rem] bg-white flex items-center justify-center border border-white mx-auto shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all", btn.color)}>
-								<btn.icon className="w-10 h-10 text-slate-700" />
+                        <Card key={i} onClick={() => navigate(btn.path)} className="harmonic-glass border-white p-8 cursor-pointer hover:scale-[1.05] active:scale-95 transition-all text-center space-y-4 shadow-soft group">
+                            <div className={cn("w-16 h-16 rounded-[2rem] bg-white flex items-center justify-center border border-white mx-auto shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all", btn.color)}>
+								<btn.icon className="w-8 h-8 text-slate-700" />
 							</div>
-                            <div className="space-y-2">
-								<h3 className="font-serif text-2xl font-black italic text-slate-800 uppercase tracking-tighter transition-colors group-hover:text-teal-600">{btn.title}</h3>
-								<p className="text-[11px] font-black uppercase tracking-widest text-slate-400 leading-tight italic">"{btn.desc}"</p>
+                            <div className="space-y-1">
+								<h3 className="font-serif text-xl font-black italic text-slate-800 uppercase tracking-tighter transition-colors group-hover:text-teal-600 leading-none">{btn.title}</h3>
+								<p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-tight italic">"{btn.desc}"</p>
 							</div>
                         </Card>
                     ))}
                 </div>
+
+                {/* 🔔 NEURAL REMINDERS SECTION */}
+                <section className="space-y-8">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-1 text-left">
+                            <h2 className="text-4xl font-serif font-black italic text-slate-800 tracking-tight">Neural Reminders</h2>
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-600/60 leading-none">Establishing Routine Consistency...</p>
+                        </div>
+                        <Button onClick={() => navigate('/notifications')} variant="ghost" className="rounded-full gap-2 text-slate-400 font-black tracking-widest uppercase text-[10px]">
+                            Manage Hub <ArrowRight size={14} />
+                        </Button>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                        {[
+                            { title: 'Zen Meditation', time: '08:00 AM', days: 'Daily', desc: '10min Deep Resonance', icon: Brain, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                            { title: 'Neural Scan', time: '12:00 PM', days: 'Mon, Wed, Fri', desc: 'Bio-Metric Baseline', icon: Camera, color: 'text-teal-600', bg: 'bg-teal-50' },
+                            { title: 'Clinical Rest', time: '10:30 PM', days: 'Daily', desc: 'Parasympathetic Prep', icon: Moon, color: 'text-sky-600', bg: 'bg-sky-50' },
+                        ].map((rem, i) => (
+                            <Card key={i} className="harmonic-glass-hover border-white p-8 flex items-center gap-6 group shadow-soft">
+                                <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0 group-hover:scale-110 transition-all", rem.bg)}>
+                                    <rem.icon className={cn("w-6 h-6", rem.color)} />
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <h4 className="font-black text-slate-800 italic underline decoration-slate-200">{rem.title}</h4>
+                                        <Badge variant="outline" className="text-[8px] uppercase tracking-tighter px-2 border-slate-100">{rem.days}</Badge>
+                                    </div>
+                                    <p className="text-xl font-black text-slate-900 leading-none">{rem.time}</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">"{rem.desc}"</p>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                </section>
 
 				{/* Identity Banner */}
 				<Card className="relative overflow-hidden rounded-[5rem] border-white shadow-harmonic group bg-gradient-to-br from-teal-500 to-indigo-700 p-24 text-white text-left">
