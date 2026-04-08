@@ -24,29 +24,29 @@ const Landing = () => {
                     <div className="max-w-5xl mx-auto text-center space-y-12 mb-32">
                         <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full harmonic-glass bg-white/20 border-white/50 animate-breathe">
                             <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-800">Platform v2.0 • Aura Harmonic Protocol</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-800">Platform v2.0 • MindBridge</span>
                         </div>
                         
                         <div className="space-y-6 animate-slide-up px-6 relative z-20">
                             <h1 className="text-6xl sm:text-7xl lg:text-[10rem] font-serif font-black tracking-tighter leading-none text-slate-900 italic drop-shadow-sm">
                                 Mindful <br /> 
-                                <span className="text-teal-600 not-italic">Resonance.</span>
+                                <span className="text-teal-600 not-italic">Wellness.</span>
                             </h1>
                             <p className="text-xl sm:text-3xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed pt-8">
-                                A high-fidelity sanctuary for emotional exploration. <br />
-                                <span className="text-slate-800 font-black underline decoration-teal-200">Neural-matched AI</span> meets architectural design.
+                                A safe space for mental health and emotional support. <br />
+                                <span className="text-slate-800 font-black underline decoration-teal-200">AI-powered support</span> designed for your wellbeing.
                             </p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-12 relative z-30">
                             <Link to="/login">
                                 <Button className="btn-aura h-16 sm:h-20 px-12 sm:px-16 text-lg tracking-widest uppercase shadow-2xl transition-all">
-                                    Initiate Sanctuary
+                                    Get Started
                                     <ArrowRight className="ml-3 w-5 h-5" />
                                 </Button>
                             </Link>
                             <Button variant="ghost" className="btn-aura-outline h-16 sm:h-20 px-12 sm:px-16 text-lg tracking-widest uppercase">
-                                View Protocol
+                                Learn More
                             </Button>
                         </div>
 
@@ -64,7 +64,7 @@ const Landing = () => {
                          {[
                             { title: 'Seeker', desc: 'Secure emotional offloading via sentient node mapping.', icon: Heart },
                             { title: 'Guide', desc: 'Clinical visualization of patient subconscious trends.', icon: Brain },
-                            { title: 'Nexus', desc: 'Full-spectrum authority over the neural stability network.', icon: ShieldCheck }
+                            { title: 'Admin', desc: 'Full control over the platform and users.', icon: ShieldCheck }
                          ].map((f, i) => (
                              <div key={i} className="text-left space-y-10 group transition-all duration-700 hover:-translate-y-4 px-8">
                                  <div className="w-20 h-20 rounded-full bg-white/40 backdrop-blur-xl shadow-soft flex items-center justify-center text-teal-600 border border-white/60 group-hover:bg-white transition-colors">
@@ -89,13 +89,13 @@ const Landing = () => {
                              <div className="space-y-12">
                                  <div className="inline-flex items-center gap-4 px-6 py-2 rounded-full bg-white/50 border border-white text-[10px] font-black uppercase tracking-widest text-teal-700">
                                      <Activity className="w-4 h-4 animate-ping" />
-                                     Biometric Resonance Enabled
+                                     Secure & Private
                                  </div>
                                  <h2 className="text-6xl md:text-8xl font-serif font-black tracking-tighter text-slate-900 leading-none italic">
                                      Witness the <span className="text-teal-600 not-italic">Subconscious.</span>
                                  </h2>
                                  <p className="text-2xl text-slate-400 font-medium leading-relaxed">
-                                     Our proprietary <strong className="text-slate-800">Harmonic AI</strong> maps the silent oscillations of your neural patterns to provide a visual narrative of your inner world.
+                                     Our AI listens, understands, and helps you track your mental wellbeing over time with simple and clear insights.
                                  </p>
                              </div>
                              <div className="relative animate-float-harmonic">
@@ -128,11 +128,11 @@ const Landing = () => {
                              </div>
                          </div>
                          <div className="flex gap-8">
-                             {['Architecture', 'Privacy', 'Neural Node', 'Nexus Hub'].map((link, i) => (
+                             {['About', 'Privacy', 'Support', 'Dashboard'].map((link, i) => (
                                  <a key={i} href="#" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-teal-600 transition-colors">{link}</a>
                              ))}
                          </div>
-                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">© 2026 Aura Harmonic • All Synapses Reserved.</p>
+                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">© 2026 MindBridge • All Rights Reserved.</p>
                     </div>
                 </div>
             </footer>

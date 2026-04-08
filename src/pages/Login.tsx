@@ -31,7 +31,7 @@ const Login = () => {
 
     const roleConfigs = {
         user: {
-            title: 'Seeker',
+            title: 'Patient',
             description: 'Patient & Explorer',
             icon: Heart,
             color: 'from-teal-400 to-emerald-600',
@@ -40,7 +40,7 @@ const Login = () => {
             portal: 'dashboard'
         },
         psychiatrist: {
-            title: 'Guide',
+            title: 'Psychiatrist',
             description: 'Clinical Professional',
             icon: Stethoscope,
             color: 'from-indigo-400 to-violet-600',
@@ -49,7 +49,7 @@ const Login = () => {
             portal: 'psychiatrist'
         },
         admin: {
-            title: 'Nexus',
+            title: 'Admin',
             description: 'System Architect',
             icon: ShieldCheck,
             color: 'from-amber-400 to-orange-600',
@@ -75,7 +75,7 @@ const Login = () => {
                 ? { email, password, role }
                 : { email, password, display_name: displayName, role };
 
-            const response = await fetch(`http://localhost:5000${endpoint}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -87,19 +87,19 @@ const Login = () => {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                toast.success(isLogin ? "Neural Alignment Successful" : "Sanctuary Path Established", {
-                    description: `Synchronized with the ${roleConfigs[data.user.role as UserRole].title} protocol.`,
+                toast.success(isLogin ? "Login Successful" : "Account Created Successfully", {
+                    description: `Welcome to your ${roleConfigs[data.user.role as UserRole].title} dashboard.`,
                 });
 
                 if (data.user.role === 'admin') navigate('/admin');
                 else if (data.user.role === 'psychiatrist') navigate('/psychiatrist');
                 else navigate('/dashboard');
             } else {
-                setGeneralError(data.message || "Alignment Failed");
+                setGeneralError(data.message || "Login Failed");
             }
         } catch (error) {
             console.error("Auth error:", error);
-            setGeneralError("Neural network timeout. Check your relay.");
+            setGeneralError("Connection failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -130,12 +130,12 @@ const Login = () => {
 
                         <div className="space-y-6">
                             <h1 className="text-6xl sm:text-7xl lg:text-9xl font-serif font-black tracking-tighter leading-none text-slate-900 italic">
-                                {step === 'role' ? 'Identify.' : 'Synchronize.'}
+                                {step === 'role' ? 'Who are you?' : 'Welcome Back.'}
                             </h1>
                             <p className="text-xl sm:text-2xl text-slate-400 font-medium max-w-xl mx-auto xl:mx-0 leading-relaxed">
                                 {step === 'role'
-                                    ? "Select your resonance point to enter the sanctuary. Each node is uniquely mapped to your neural signature."
-                                    : `Establishing a secure biometric handshake with the ${config.title} protocol.`}
+                                    ? "Select your role to continue. Choose the option that best describes you."
+                                    : `Sign in to your ${config.title} dashboard.`}
                             </p>
                         </div>
                     </div>
@@ -215,7 +215,7 @@ const Login = () => {
                                         )}
 
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 pl-1">Neural Address</label>
+                                            <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 pl-1">Email Address</label>
                                             <div className="relative group">
                                                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-teal-500 transition-colors" />
                                                 <input
@@ -264,7 +264,7 @@ const Login = () => {
                                                 className="w-full btn-aura h-20 text-md tracking-[0.4em] uppercase shadow-2xl"
                                                 disabled={loading}
                                             >
-                                                {loading ? "Aligning..." : (isLogin ? "Initiate Sync" : "Deploy Identity")}
+                                                {loading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
                                             </Button>
                                         </div>
 
@@ -278,7 +278,7 @@ const Login = () => {
                                             onClick={() => setIsLogin(!isLogin)}
                                             className="w-full text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-teal-600 transition-colors group"
                                         >
-                                            {isLogin ? "Generate New Node identifier" : "Existing Identity sync"}
+                                            {isLogin ? "Create a new account" : "Already have an account? Sign in"}
                                             <ArrowRight className="inline-block ml-3 w-4 h-4 group-hover:translate-x-2 transition-transform" />
                                         </button>
                                     </form>
