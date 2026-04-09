@@ -100,7 +100,18 @@ async function initializeDatabase() {
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )`,
 
-        // 6. Emergency Alerts
+        // 6. Direct Messages (Psychiatrist <-> Patient)
+        \`CREATE TABLE IF NOT EXISTS direct_messages (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            sender_id INT NOT NULL,
+            receiver_id INT NOT NULL,
+            content TEXT NOT NULL,
+            is_read TINYINT(1) DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_id) REFERENCES users(id),
+            FOREIGN KEY (receiver_id) REFERENCES users(id)
+        )\`,
+        // 7. Emergency Alerts
         `CREATE TABLE IF NOT EXISTS emergency_alerts (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,

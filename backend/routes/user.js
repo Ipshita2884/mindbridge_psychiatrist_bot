@@ -103,4 +103,34 @@ router.get('/stats', authenticate, async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router;
+
+
+// Get messages for user (with their psychiatrist)
+router.get('/messages/:psychiatristId', authenticate, async (req, res) => {
+    try {
+        const [msgs] = await db.execute(
+            'SELECT dm.*, u.display_name as sender_name FROM direct_messages dm JOIN users u ON dm.sender_id = u.id WHERE (dm.sender_id = ? AND dm.receiver_id = ?) OR (dm.sender_id = ? AND dm.receiver_id = ?) ORDER BY dm.created_at ASC',
+            [req.user.userId, req.params.psychiatristId, req.params.psychiatristId, req.user.userId]
+        );
+        res.json({ success: true, data: msgs });
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false, data: [] });
+    }
+});
+
+// Send message to psychiatrist
+router.post('/messages/:psychiatristId', authenticate, async (req, res) => {
+    try {
+        const { content } = req.body;
+        await db.execute(
+            'INSERT INTO direct_messages (sender_id, receiver_id, content, created_at) VALUES (?, ?, ?, NOW())',
+            [req.user.userId, req.params.psychiatristId, content]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false });
+    }
+});

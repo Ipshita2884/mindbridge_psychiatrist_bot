@@ -71,3 +71,32 @@ router.get('/alerts', authenticate, requireRole('psychiatrist', 'admin'), async 
 });
 
 module.exports = router;
+
+// Get messages between psychiatrist and patient
+router.get('/messages/:patientId', authenticate, async (req, res) => {
+    try {
+        const [msgs] = await db.execute(
+            'SELECT dm.*, u.display_name as sender_name FROM direct_messages dm JOIN users u ON dm.sender_id = u.id WHERE (dm.sender_id = ? AND dm.receiver_id = ?) OR (dm.sender_id = ? AND dm.receiver_id = ?) ORDER BY dm.created_at ASC',
+            [req.user.userId, req.params.patientId, req.params.patientId, req.user.userId]
+        );
+        res.json({ success: true, data: msgs });
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false, data: [] });
+    }
+});
+
+// Send message
+router.post('/messages/:patientId', authenticate, async (req, res) => {
+    try {
+        const { content } = req.body;
+        await db.execute(
+            'INSERT INTO direct_messages (sender_id, receiver_id, content, created_at) VALUES (?, ?, ?, NOW())',
+            [req.user.userId, req.params.patientId, content]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false });
+    }
+});

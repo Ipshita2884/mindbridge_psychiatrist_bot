@@ -63,25 +63,51 @@ const MessagesCenter = () => {
 
   const currentPatient = patients.find(p => p.user_id === activeConversation);
 
+  useEffect(() => {
+    if (activeConversation) {
+      fetchMessages(activeConversation);
+      const interval = setInterval(() => fetchMessages(activeConversation), 3000);
+      return () => clearInterval(interval);
+    }
+  }, [activeConversation]);
+
+  const fetchMessages = async (patientId: number) => {
+    try {
+      const res = await fetch(`${API_URL}/psychiatrist/messages/${patientId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setMessages(data.data);
+    } catch (e) { console.error(e); }
+  };
+
+  useEffect(() => {
+    if (activeConversation) {
+      fetchMessages(activeConversation);
+      const interval = setInterval(() => fetchMessages(activeConversation), 3000);
+      return () => clearInterval(interval);
+    }
+  }, [activeConversation]);
+
+  
+
   const handleLogout = () => {
     localStorage.clear();
     navigate('/');
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!messageText.trim() || !activeConversation) return;
-    
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      patientId: activeConversation,
-      content: messageText,
-      timestamp: 'Just now',
-      read: true,
-      sender: 'psychiatrist'
-    };
-    
-    setMessages([...messages, newMessage]);
+    const text = messageText;
     setMessageText('');
+    try {
+      await fetch(`${API_URL}/psychiatrist/messages/${activeConversation}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ content: text }),
+      });
+      fetchMessages(activeConversation);
+    } catch (e) { console.error(e); }
   };
 
   const filteredPatients = patients.filter(p =>
@@ -218,14 +244,29 @@ const MessagesCenter = () => {
                     </div>
                   )}
 
-                  {/* Dialogue history placeholder */}
-                  <div className="flex flex-col items-center justify-center py-20 text-center opacity-50 grayscale">
-                     <div className="w-20 h-20 bg-indigo-50 rounded-[2rem] flex items-center justify-center mb-6">
-                       <MessageSquare className="w-10 h-10 text-indigo-600" />
-                     </div>
-                     <p className="font-serif text-2xl font-bold text-slate-900 mb-2">Secure Correspondence</p>
-                     <p className="max-w-xs font-medium text-slate-500 mx-auto">This clinical dialogue is end-to-end encrypted and logged for patient monitoring.</p>
-                  </div>
+                  {messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
+                      <MessageSquare className="w-10 h-10 text-indigo-300 mb-4" />
+                      <p className="font-medium text-slate-500">No messages yet. Start the conversation!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {messages.map((msg: any) => {
+                        const user = JSON.parse(localStorage.getItem('user') || '{}');
+                        const isMine = msg.sender_id === user.id;
+                        return (
+                          <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[70%] px-5 py-3 rounded-2xl text-sm font-medium shadow-sm ${isMine ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-white text-slate-800 rounded-bl-sm border border-slate-100'}`}>
+                              <p>{msg.content}</p>
+                              <p className={`text-[10px] mt-1 ${isMine ? 'text-indigo-200' : 'text-slate-400'}`}>
+                                {new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </CardContent>
 
                 <div className="p-6 border-t border-slate-100 bg-white">
