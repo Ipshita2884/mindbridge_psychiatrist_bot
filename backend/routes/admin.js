@@ -56,7 +56,6 @@ router.get('/alerts', authenticate, requireRole('admin'), async (req, res) => {
     }
 });
 
-module.exports = router;
 // Get all emergency alerts
 router.get('/emergency-alerts', async (req, res) => {
     try {
@@ -85,3 +84,5 @@ router.put('/emergency-alerts/:id/resolve', async (req, res) => {
         res.json({ success: false });
     }
 });
+
+module.exports = router;

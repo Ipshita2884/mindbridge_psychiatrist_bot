@@ -101,7 +101,7 @@ async function initializeDatabase() {
         )`,
 
         // 6. Direct Messages (Psychiatrist <-> Patient)
-        \`CREATE TABLE IF NOT EXISTS direct_messages (
+        `CREATE TABLE IF NOT EXISTS direct_messages (
             id INT AUTO_INCREMENT PRIMARY KEY,
             sender_id INT NOT NULL,
             receiver_id INT NOT NULL,
@@ -110,7 +110,7 @@ async function initializeDatabase() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (sender_id) REFERENCES users(id),
             FOREIGN KEY (receiver_id) REFERENCES users(id)
-        )\`,
+        )`,
         // 7. Emergency Alerts
         `CREATE TABLE IF NOT EXISTS emergency_alerts (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -243,7 +243,7 @@ async function initializeDatabase() {
         const [medCols] = await pool.query('SHOW COLUMNS FROM medical_history');
         const medColNames = medCols.map((c) => c.Field);
         if (!medColNames.includes('medications')) {
-            await pool.query('ALTER TABLE medical_history ADD COLUMN medications TEXT AFTER \`condition\`');
+            await pool.query('ALTER TABLE medical_history ADD COLUMN medications TEXT AFTER `condition`');
         }
         if (!medColNames.includes('allergies')) {
             await pool.query('ALTER TABLE medical_history ADD COLUMN allergies TEXT AFTER medications');
