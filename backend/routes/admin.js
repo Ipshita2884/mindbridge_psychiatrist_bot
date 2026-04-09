@@ -57,3 +57,31 @@ router.get('/alerts', authenticate, requireRole('admin'), async (req, res) => {
 });
 
 module.exports = router;
+// Get all emergency alerts
+router.get('/emergency-alerts', async (req, res) => {
+    try {
+        const [alerts] = await db.execute(`
+            SELECT ea.*, u.display_name as full_name, u.email 
+            FROM emergency_alerts ea 
+            JOIN users u ON ea.user_id = u.id 
+            ORDER BY ea.notified_at DESC
+        `);
+        res.json({ success: true, data: alerts });
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false, data: [] });
+    }
+});
+
+// Resolve emergency alert
+router.put('/emergency-alerts/:id/resolve', async (req, res) => {
+    try {
+        await db.execute(
+            'UPDATE emergency_alerts SET resolved_at = NOW() WHERE id = ?',
+            [req.params.id]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.json({ success: false });
+    }
+});

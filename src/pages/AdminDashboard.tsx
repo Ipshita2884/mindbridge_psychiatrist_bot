@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Navbar from '@/components/Navbar';
-import { Users, Trash2, Search, UserCheck, UserX, RefreshCw } from 'lucide-react';
+import { Users, Trash2, Search, UserCheck, UserX, RefreshCw, AlertTriangle, Bell, CheckCircle } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -16,8 +16,10 @@ const AdminDashboard = () => {
     const [actionLoading, setActionLoading] = useState<number | null>(null);
     const [toast, setToast] = useState('');
     const token = localStorage.getItem('token');
+    const [alerts, setAlerts] = useState<any[]>([]);
+    const [alertsLoading, setAlertsLoading] = useState(true);
 
-    useEffect(() => { fetchUsers(); }, []);
+    useEffect(() => { fetchUsers(); fetchAlerts(); }, []);
 
     const showToast = (msg: string) => {
         setToast(msg);
@@ -42,6 +44,29 @@ const AdminDashboard = () => {
             }
         } catch (e) { console.error(e); }
         setLoading(false);
+    };
+
+    const fetchAlerts = async () => {
+        setAlertsLoading(true);
+        try {
+            const res = await fetch(`${API_URL}/admin/emergency-alerts`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.success) setAlerts(data.data || []);
+        } catch (e) { console.error(e); }
+        setAlertsLoading(false);
+    };
+
+    const resolveAlert = async (alertId: number) => {
+        try {
+            await fetch(`${API_URL}/admin/emergency-alerts/${alertId}/resolve`, {
+                method: 'PUT',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, status: 'resolved' } : a));
+            showToast('Alert resolved!');
+        } catch (e) { console.error(e); }
     };
 
     const updateRole = async (userId: number, newRole: string) => {
@@ -254,6 +279,65 @@ const AdminDashboard = () => {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* SOS / Emergency Alerts Section */}
+                <Card className="mt-8">
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2 text-red-600">
+                                <AlertTriangle className="w-5 h-5" /> SOS & Emergency Alerts
+                                {alerts.filter(a => a.status !== 'resolved').length > 0 && (
+                                    <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                        {alerts.filter(a => a.status !== 'resolved').length} Active
+                                    </span>
+                                )}
+                            </CardTitle>
+                            <button onClick={fetchAlerts}
+                                className="flex items-center gap-1 px-3 py-2 text-sm border border-border rounded-lg hover:bg-muted transition-colors">
+                                <RefreshCw className="w-4 h-4" /> Refresh
+                            </button>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {alertsLoading ? (
+                            <div className="flex items-center justify-center h-24">
+                                <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                            </div>
+                        ) : alerts.length === 0 ? (
+                            <div className="text-center py-10 text-muted-foreground">
+                                <Bell className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                                <p>No emergency alerts at the moment</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {alerts.map(alert => (
+                                    <div key={alert.id} className={`flex items-start justify-between p-4 rounded-xl border ${alert.resolved_at !== null ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                                        <div className="flex items-start gap-3">
+                                            <AlertTriangle className={`w-5 h-5 mt-0.5 ${alert.resolved_at !== null ? 'text-green-500' : 'text-red-500'}`} />
+                                            <div>
+                                                <p className="font-semibold text-sm">{alert.full_name || 'Unknown User'}</p>
+                                                <p className="text-xs text-muted-foreground">{alert.email}</p>
+                                                <p className="text-sm mt-1">Trigger: {alert.trigger_type} | Severity: {alert.severity}</p>
+                                                <p className="text-xs text-muted-foreground mt-1">{alert.notified_at ? new Date(alert.notified_at).toLocaleString() : 'Unknown time'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${alert.resolved_at !== null ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                {alert.resolved_at !== null ? 'Resolved' : 'Active'}
+                                            </span>
+                                            {alert.status !== 'resolved' && (
+                                                <button onClick={() => resolveAlert(alert.id)}
+                                                    className="flex items-center gap-1 px-3 py-1.5 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                                    <CheckCircle className="w-3 h-3" /> Resolve
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </CardContent>

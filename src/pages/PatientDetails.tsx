@@ -10,7 +10,7 @@ import {
   User, CheckCircle2, XCircle, TrendingUp
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api';
 
 const PatientDetails = () => {
   const navigate = useNavigate();

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import { UserPlus, ArrowLeft, Mail, Lock, User, Phone, Calendar, HeartPulse } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api';
 
 const AddPatient = () => {
   const navigate = useNavigate();
