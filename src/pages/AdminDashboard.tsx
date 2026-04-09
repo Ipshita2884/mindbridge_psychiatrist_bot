@@ -29,7 +29,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/users/all`, {
+            const res = await fetch(`${API_URL}/admin/users`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
